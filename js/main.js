@@ -1,5 +1,6 @@
 const getRandomInt = (min, max) => {
   if (max <= min) {
+    // eslint-disable-next-line no-console
     console.log('Максимальное значение должно быть больше минимального.');
     return false;
   }
@@ -13,6 +14,7 @@ const getRandomInt = (min, max) => {
 
 const getRandom = (min, max, countSigns = 2) => {
   if (max <= min) {
+    // eslint-disable-next-line no-console
     console.log('Максимальное значение должно быть больше минимального.');
     return false;
   }
@@ -21,10 +23,10 @@ const getRandom = (min, max, countSigns = 2) => {
     return false;
   }
 
-  let rand = Math.random() * (max - min + 1) + min;
+  const rand = Math.random() * (max - min + 1) + min;
 
   return +rand.toFixed(countSigns);
-}
+};
 
 getRandomInt(2, 5);
 getRandom(2, 5);
