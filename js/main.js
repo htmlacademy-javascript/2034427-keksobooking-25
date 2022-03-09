@@ -1,3 +1,2 @@
-import {listObjets} from './data.js';
+import './similar-ads.js';
 
-listObjets();
