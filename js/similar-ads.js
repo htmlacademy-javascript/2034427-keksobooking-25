@@ -1,8 +1,3 @@
-import {listObjets} from './data.js';
-
-const adsList = listObjets(1);
-
-const adsListElement = document.querySelector('.map__canvas');
 const adItemTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const housing = {
@@ -13,40 +8,51 @@ const housing = {
   'hotel': 'Отель'
 };
 
-adsList.forEach(({author, offer}) => {
-  const adItem = adItemTemplate.cloneNode(true);
-  // eslint-disable-next-line
-  offer.title
-    ? adItem.querySelector('.popup__title').textContent = offer.title
-    : adItem.querySelector('.popup__title').remove();
-  adItem.querySelector('.popup__text--address').textContent = offer.address;
-  adItem.querySelector('.popup__text--price').innerHTML = `${offer.price} <span>₽/ночь</span>`;
-  adItem.querySelector('.popup__type').textContent = housing[offer.type];
-  adItem.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
-  adItem.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
-  adItem.querySelector('.popup__description').textContent = offer.description;
-  adItem.querySelector('.popup__avatar').src = author.avatar;
-
+const createFeaturesFragment = (element, features) => {
   const featuresFragment = document.createDocumentFragment();
-  const featureItem = adItem.querySelector('.popup__feature');
+  const featureItem = element.querySelector('.popup__feature');
   featureItem.classList.remove(featureItem.classList.item(1));
-  offer.features.forEach((feature) => {
+  features.forEach((feature) => {
     const featureClone = featureItem.cloneNode(true);
     featureClone.classList.add(`popup__feature--${feature}`);
     featuresFragment.appendChild(featureClone);
   });
-  adItem.querySelector('.popup__features').innerHTML = '';
-  adItem.querySelector('.popup__features').appendChild(featuresFragment);
+  element.querySelector('.popup__features').innerHTML = '';
 
+  return featuresFragment;
+};
+
+const createPhotosFragment = (element, photos) => {
   const photosFragment = document.createDocumentFragment();
-  const photoItem = adItem.querySelector('.popup__photo');
-  offer.photos.forEach((photo) => {
-    const clone = photoItem.cloneNode(true);
-    clone.src = photo;
-    photosFragment.appendChild(clone);
+  const photoItem = element.querySelector('.popup__photo');
+  photos.forEach((photo) => {
+    const photoClone = photoItem.cloneNode(true);
+    photoClone.src = photo;
+    photosFragment.appendChild(photoClone);
   });
-  adItem.querySelector('.popup__photos').innerHTML = '';
-  adItem.querySelector('.popup__photos').appendChild(photosFragment);
+  element.querySelector('.popup__photos').innerHTML = '';
 
-  adsListElement.append(adItem);
-});
+  return photosFragment;
+};
+
+const createAdElement = ({author, offer}) => {
+  const element = adItemTemplate.cloneNode(true);
+  // eslint-disable-next-line
+  offer.title
+    ? element.querySelector('.popup__title').textContent = offer.title
+    : element.querySelector('.popup__title').remove();
+  element.querySelector('.popup__text--address').textContent = offer.address;
+  element.querySelector('.popup__text--price').innerHTML = `${offer.price} <span>₽/ночь</span>`;
+  element.querySelector('.popup__type').textContent = housing[offer.type];
+  element.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
+  element.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
+  element.querySelector('.popup__description').textContent = offer.description;
+  element.querySelector('.popup__avatar').src = author.avatar;
+
+  element.querySelector('.popup__features').appendChild(createFeaturesFragment(element, offer.features));
+  element.querySelector('.popup__photos').appendChild(createPhotosFragment(element, offer.photos));
+
+  return element;
+};
+
+export {createAdElement};
