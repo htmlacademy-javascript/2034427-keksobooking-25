@@ -30,9 +30,11 @@ const pristine = new Pristine(adForm, {
   errorTextClass: 'text-help'
 });
 
-pristine.addValidator(priceField, (valuePrice) => valuePrice >= parseInt(priceField.min, 10) && valuePrice <= MAX_PRICE, `Цена за ноч от ${priceField.min} до ${MAX_PRICE}`);
+pristine.addValidator(priceField, (valuePrice) => valuePrice >= parseInt(priceField.min, 10) && valuePrice <= MAX_PRICE,
+  `Цена за ноч от ${priceField.min} до ${MAX_PRICE}`);
 
-pristine.addValidator(titleField, (symbols) => symbols.length >= MIN_LENGTH_TITLE && symbols.length <= MAX_LENGTH_TITLE , `Длинна объявления должна быть от ${MIN_LENGTH_TITLE} до ${MAX_LENGTH_TITLE} символов.`);
+pristine.addValidator(titleField, (symbols) => symbols.length >= MIN_LENGTH_TITLE && symbols.length <= MAX_LENGTH_TITLE ,
+  `Длинна объявления должна быть от ${MIN_LENGTH_TITLE} до ${MAX_LENGTH_TITLE} символов.`);
 
 const roomsCapacityValidator = () => {
   const countRooms = parseInt(roomsField.value, 10);
@@ -52,7 +54,8 @@ const getRoomsCapacityErrorMessage = () => {
 };
 
 pristine.addValidator(roomsField, roomsCapacityValidator, getRoomsCapacityErrorMessage);
-pristine.addValidator(capacityField, roomsCapacityValidator);
+
+capacityField.addEventListener('change', () => pristine.validate(roomsField));
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
