@@ -7,6 +7,11 @@ const capacityField = document.querySelector('#capacity');
 const timeInField = document.querySelector('#timein');
 const timeOutField = document.querySelector('#timeout');
 
+const adFormFieldset = adForm.querySelectorAll('fieldset');
+const filterForm = document.querySelector('.map__filters');
+const filterFormSelects = filterForm.querySelectorAll('select');
+const filterFormFieldset = filterForm.querySelector('fieldset');
+
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
 const MAX_PRICE = 1000000;
@@ -30,6 +35,34 @@ const capacityNumberToText = {
   1: 'одного гостя',
   2: 'двух гостей',
   3: 'трех гостей',
+};
+
+const setNotActiveStatus = () => {
+  adForm.classList.add('ad-form--disabled');
+  filterForm.classList.add('map__filters--disabled');
+
+  adFormFieldset.forEach((fieldset) => {
+    fieldset.setAttribute('disabled', 'disabled');
+  });
+
+  filterFormSelects.forEach((select) => {
+    select.setAttribute('disabled', 'disabled');
+  });
+  filterFormFieldset.setAttribute('disabled', 'disabled');
+};
+
+const setActiveStatus = () => {
+  adForm.classList.remove('ad-form--disabled');
+  filterForm.classList.remove('map__filters--disabled');
+
+  adFormFieldset.forEach((fieldset) => {
+    fieldset.removeAttribute('disabled');
+  });
+
+  filterFormSelects.forEach((select) => {
+    select.removeAttribute('disabled');
+  });
+  filterFormFieldset.removeAttribute('disabled');
 };
 
 const pristine = new Pristine(adForm, {
@@ -107,3 +140,5 @@ adForm.addEventListener('submit', (evt) => {
     adForm.reset();
   }
 });
+
+export {setNotActiveStatus, setActiveStatus};
