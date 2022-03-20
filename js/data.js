@@ -45,6 +45,6 @@ const createObject = () => {
   };
 };
 
-const listObjets = (count = 10) => Array.from({length: count}, createObject);
+const listAdObjets = (count = 10) => Array.from({length: count}, createObject);
 
-export {listObjets};
+export {listAdObjets};

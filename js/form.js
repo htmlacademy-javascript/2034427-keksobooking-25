@@ -1,6 +1,7 @@
-import {priceSlider, resetPriceSlider} from './slider.js';
+import {MIN_LENGTH_TITLE, MAX_LENGTH_TITLE, MAX_PRICE} from './constant.js';
+import {priceSlider} from './slider.js';
 
-const adForm = document.querySelector('.ad-form');
+const form = document.querySelector('.ad-form');
 const titleField = document.querySelector('#title');
 const typeField = document.querySelector('#type');
 const priceField = document.querySelector('#price');
@@ -8,11 +9,9 @@ const roomsField = document.querySelector('#room_number');
 const capacityField = document.querySelector('#capacity');
 const timeInField = document.querySelector('#timein');
 const timeOutField = document.querySelector('#timeout');
+const addressField = document.querySelector('#address');
 const resetButton = document.querySelector('.ad-form__reset');
-
-const MIN_LENGTH_TITLE = 30;
-const MAX_LENGTH_TITLE = 100;
-const MAX_PRICE = 100000;
+addressField.setAttribute('readonly', 'readonly');
 
 const minPrices = {
   'bungalow': 0,
@@ -35,7 +34,7 @@ const capacityNumberToText = {
   3: 'трех гостей',
 };
 
-const pristine = new Pristine(adForm, {
+const pristine = new Pristine(form, {
   classTo: 'ad-form__element',
   errorClass: 'has-danger',
   successClass: 'has-success',
@@ -43,6 +42,14 @@ const pristine = new Pristine(adForm, {
   errorTextTag: 'div',
   errorTextClass: 'text-help'
 }, true);
+
+priceSlider(parseInt(priceField.min, 10), MAX_PRICE, pristine);
+
+const setAdders = ({lat, lng}) => {
+  const latitude = lat.toFixed(5);
+  const longitude = lng.toFixed(5);
+  addressField.value = `${latitude} ${longitude}`;
+};
 
 const setAdType = () => {
   priceField.min = minPrices[typeField.value];
@@ -96,23 +103,27 @@ typeField.addEventListener('change', () => {
   pristine.validate(priceField);
 });
 
-resetButton.addEventListener('click', () => {
-  adForm.reset();
-  resetPriceSlider();
-  pristine.reset();
-  setAdType();
-});
+const addForm = (setDefault) => {
 
-setAdType();
+  const resetForm = () => {
+    form.reset();
+    pristine.reset();
+    setDefault();
+    setAdType();
+  };
 
-priceSlider(parseInt(priceField.min, 10), MAX_PRICE, pristine);
+  resetButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+  });
 
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const isValid = pristine.validate();
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      resetForm();
+    }
+  });
+};
 
-  if (isValid) {
-    adForm.reset();
-    resetPriceSlider();
-  }
-});
+export {addForm, setAdders};

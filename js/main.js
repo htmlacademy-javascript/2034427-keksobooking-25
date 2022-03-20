@@ -1,11 +1,20 @@
-import {listObjets} from './data.js';
+import {START_LAT, START_LNG} from './constant.js';
+import {listAdObjets} from './data.js';
 import {renderAds} from './render.js';
 import {setAppDisabled} from './app-disabled.js';
-import './form.js';
+import {addForm, setAdders} from './form.js';
+import {resetPriceSlider} from './slider.js';
+import {initialMap, resetMainPinMarker} from './map.js';
 
 setAppDisabled(true);
-setAppDisabled(false);
+renderAds(listAdObjets());
+addForm(setDefault);
 
-const data = listObjets();
-renderAds(data[1]);
+function setDefault() {
+  initialMap();
+  resetMainPinMarker();
+  resetPriceSlider();
+  setAdders({lat: START_LAT, lng: START_LNG});
+}
 
+setDefault();
