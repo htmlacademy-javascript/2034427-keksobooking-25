@@ -1,7 +1,8 @@
 import {MIN_LENGTH_TITLE, MAX_LENGTH_TITLE, MAX_PRICE} from './constant.js';
 import {priceSlider} from './slider.js';
 
-const form = document.querySelector('.ad-form');
+const adForm = document.querySelector('.ad-form');
+const formFieldset = adForm.querySelectorAll('fieldset');
 const titleField = document.querySelector('#title');
 const typeField = document.querySelector('#type');
 const priceField = document.querySelector('#price');
@@ -34,7 +35,7 @@ const capacityNumberToText = {
   3: 'трех гостей',
 };
 
-const pristine = new Pristine(form, {
+const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'has-danger',
   successClass: 'has-success',
@@ -103,10 +104,20 @@ typeField.addEventListener('change', () => {
   pristine.validate(priceField);
 });
 
-const addForm = (setDefault) => {
+const setEnableForm = () => {
+  adForm.classList.remove('ad-form--disabled');
+  formFieldset.forEach((it) => {it.disabled = false;});
+};
+
+const setDisableForm = () => {
+  adForm.classList.add('ad-form--disabled');
+  formFieldset.forEach((it) => {it.disabled = true;});
+};
+
+const initialForm = (setDefault) => {
 
   const resetForm = () => {
-    form.reset();
+    adForm.reset();
     pristine.reset();
     setDefault();
     setAdType();
@@ -117,7 +128,7 @@ const addForm = (setDefault) => {
     resetForm();
   });
 
-  form.addEventListener('submit', (evt) => {
+  adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
     if (isValid) {
@@ -126,4 +137,4 @@ const addForm = (setDefault) => {
   });
 };
 
-export {addForm, setAdders};
+export {initialForm, setAdders, setEnableForm, setDisableForm};

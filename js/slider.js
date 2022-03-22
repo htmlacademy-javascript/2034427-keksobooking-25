@@ -26,6 +26,6 @@ const priceSlider = (minValue, maxPrice, pristine) => {
   });
 };
 
-const resetPriceSlider = () => sliderElement.noUiSlider.set(0);
+const setSliderDefaultValue = () => sliderElement.noUiSlider.set(0);
 
-export {priceSlider, resetPriceSlider};
+export {priceSlider, setSliderDefaultValue};

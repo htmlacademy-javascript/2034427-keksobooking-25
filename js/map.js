@@ -1,6 +1,6 @@
 import {START_LAT, START_LNG, START_ZOOM, MARKER_WIDTH, MAIN_MARKER_WIDTH} from './constant.js';
-import {setAppDisabled} from './app-disabled.js';
-import {setAdders} from './form.js';
+import {setAppEnabled} from './app-status.js';
+import {setAdders} from './ad-form.js';
 
 const map = L.map('map-canvas');
 const startLatLng = L.latLng(START_LAT, START_LNG);
@@ -12,13 +12,8 @@ const icon = L.icon({
   iconAnchor: [MARKER_WIDTH / 2, MARKER_WIDTH],
 });
 
-const onMapLoaded = () => {
-  setAdders(startLatLng);
-  setAppDisabled(false);
-};
-
 const initialMap = () => {
-  map.on('load', onMapLoaded).setView(startLatLng, START_ZOOM);
+  map.on('load', setAppEnabled).setView(startLatLng, START_ZOOM);
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
@@ -58,7 +53,7 @@ const createMainPinMarker = () => {
 
 const mainPinMarker = createMainPinMarker();
 
-const resetMainPinMarker = () => {
+const setMapDefaultValue = () => {
   map.closePopup();
   mainPinMarker.setLatLng(startLatLng);
   map.setView(startLatLng, START_ZOOM);
@@ -66,6 +61,6 @@ const resetMainPinMarker = () => {
 
 mainPinMarker.on('moveend', (evt) => setAdders(evt.target.getLatLng()));
 
-export {initialMap, resetMainPinMarker, createMarker};
+export {initialMap, createMarker, setMapDefaultValue};
 
 
