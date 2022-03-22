@@ -1,10 +1,10 @@
 import {createAdElement} from './similar-ads.js';
+import {createMarker} from './map.js';
 
-const adsContainer = document.querySelector('.map__canvas');
-
-const renderAds = (adsObj) => {
-  const adItem = createAdElement(adsObj);
-  adsContainer.append(adItem);
+const renderAds = (listAds) => {
+  listAds.forEach((item) => {
+    createMarker(createAdElement(item), item.location);
+  });
 };
 
 export {renderAds};

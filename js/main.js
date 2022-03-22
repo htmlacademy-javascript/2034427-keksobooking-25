@@ -1,10 +1,19 @@
-import {listObjets} from './data.js';
+import {START_LAT, START_LNG} from './constant.js';
+import {setAppDisabled} from './app-status.js';
+import {initialMap, setMapDefaultValue} from './map.js';
+import {initialForm, setAdders} from './ad-form.js';
+import {setSliderDefaultValue} from './slider.js';
+import {listAdObjets} from './data.js';
 import {renderAds} from './render.js';
-import {setActiveStatus, setNotActiveStatus} from './form.js';
 
-setNotActiveStatus();
-setActiveStatus();
+setAppDisabled();
+initialMap();
+initialForm(setDefault);
+setDefault();
+renderAds(listAdObjets());
 
-const data = listObjets();
-renderAds(data[1]);
-
+function setDefault() {
+  setMapDefaultValue();
+  setSliderDefaultValue();
+  setAdders({lat: START_LAT, lng: START_LNG});
+}

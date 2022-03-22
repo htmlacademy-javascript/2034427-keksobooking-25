@@ -1,4 +1,8 @@
+import {MIN_LENGTH_TITLE, MAX_LENGTH_TITLE, MAX_PRICE} from './constant.js';
+import {priceSlider} from './slider.js';
+
 const adForm = document.querySelector('.ad-form');
+const formFieldset = adForm.querySelectorAll('fieldset');
 const titleField = document.querySelector('#title');
 const typeField = document.querySelector('#type');
 const priceField = document.querySelector('#price');
@@ -6,15 +10,9 @@ const roomsField = document.querySelector('#room_number');
 const capacityField = document.querySelector('#capacity');
 const timeInField = document.querySelector('#timein');
 const timeOutField = document.querySelector('#timeout');
-
-const adFormFieldset = adForm.querySelectorAll('fieldset');
-const filterForm = document.querySelector('.map__filters');
-const filterFormSelects = filterForm.querySelectorAll('select');
-const filterFormFieldset = filterForm.querySelector('fieldset');
-
-const MIN_LENGTH_TITLE = 30;
-const MAX_LENGTH_TITLE = 100;
-const MAX_PRICE = 1000000;
+const addressField = document.querySelector('#address');
+const resetButton = document.querySelector('.ad-form__reset');
+addressField.setAttribute('readonly', 'readonly');
 
 const minPrices = {
   'bungalow': 0,
@@ -37,34 +35,6 @@ const capacityNumberToText = {
   3: 'трех гостей',
 };
 
-const setNotActiveStatus = () => {
-  adForm.classList.add('ad-form--disabled');
-  filterForm.classList.add('map__filters--disabled');
-
-  adFormFieldset.forEach((fieldset) => {
-    fieldset.setAttribute('disabled', 'disabled');
-  });
-
-  filterFormSelects.forEach((select) => {
-    select.setAttribute('disabled', 'disabled');
-  });
-  filterFormFieldset.setAttribute('disabled', 'disabled');
-};
-
-const setActiveStatus = () => {
-  adForm.classList.remove('ad-form--disabled');
-  filterForm.classList.remove('map__filters--disabled');
-
-  adFormFieldset.forEach((fieldset) => {
-    fieldset.removeAttribute('disabled');
-  });
-
-  filterFormSelects.forEach((select) => {
-    select.removeAttribute('disabled');
-  });
-  filterFormFieldset.removeAttribute('disabled');
-};
-
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'has-danger',
@@ -73,6 +43,14 @@ const pristine = new Pristine(adForm, {
   errorTextTag: 'div',
   errorTextClass: 'text-help'
 }, true);
+
+priceSlider(parseInt(priceField.min, 10), MAX_PRICE, pristine);
+
+const setAdders = ({lat, lng}) => {
+  const latitude = lat.toFixed(5);
+  const longitude = lng.toFixed(5);
+  addressField.value = `${latitude} ${longitude}`;
+};
 
 const setAdType = () => {
   priceField.min = minPrices[typeField.value];
@@ -83,9 +61,7 @@ const getPriceValidatorErrors = () => {
   if (parseInt(priceField.value, 10) < parseInt(priceField.min, 10)) {
     return `Минимальная цена ${priceField.min}`;
   }
-  if (parseInt(priceField.value, 10) > MAX_PRICE) {
-    return `Максимальная цена ${MAX_PRICE}`;
-  }
+  return `Максимальная цена ${MAX_PRICE}`;
 };
 
 pristine.addValidator(
@@ -120,9 +96,7 @@ const getRoomsCapacityErrorMessage = () => {
 pristine.addValidator(roomsField, roomsCapacityValidator, getRoomsCapacityErrorMessage);
 
 capacityField.addEventListener('change', () => pristine.validate(roomsField));
-
 timeInField.addEventListener('change', () => {timeOutField.value = timeInField.value;});
-
 timeOutField.addEventListener('change', () => {timeInField.value = timeOutField.value;});
 
 typeField.addEventListener('change', () => {
@@ -130,15 +104,37 @@ typeField.addEventListener('change', () => {
   pristine.validate(priceField);
 });
 
-setAdType();
+const setEnableForm = () => {
+  adForm.classList.remove('ad-form--disabled');
+  formFieldset.forEach((it) => {it.disabled = false;});
+};
 
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const isValid = pristine.validate();
+const setDisableForm = () => {
+  adForm.classList.add('ad-form--disabled');
+  formFieldset.forEach((it) => {it.disabled = true;});
+};
 
-  if (isValid) {
+const initialForm = (setDefault) => {
+
+  const resetForm = () => {
     adForm.reset();
-  }
-});
+    pristine.reset();
+    setDefault();
+    setAdType();
+  };
 
-export {setNotActiveStatus, setActiveStatus};
+  resetButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+  });
+
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      resetForm();
+    }
+  });
+};
+
+export {initialForm, setAdders, setEnableForm, setDisableForm};
