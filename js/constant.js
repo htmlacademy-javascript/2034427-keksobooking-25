@@ -1,3 +1,7 @@
+const API_URL = 'https://25.javascript.pages.academy/keksobooking';
+const DEFAULT_AVATAR = 'img/muffin-grey.svg';
+const MAX_COUNT_ADS = 10;
+
 const START_LAT = 35.68950;
 const START_LNG = 139.69235;
 const START_ZOOM = 12;
@@ -8,7 +12,14 @@ const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
 const MAX_PRICE = 100000;
 
+const FILTER_DELAY = 500;
+const FILTER_DEFAULT = 'any';
+const FILTER_LOW_PRICE = 10000;
+const FILTER_HIGH_PRICE = 50000;
+
 export {
+  API_URL,
+  MAX_COUNT_ADS,
   START_LAT,
   START_LNG,
   START_ZOOM,
@@ -17,4 +28,9 @@ export {
   MIN_LENGTH_TITLE,
   MAX_LENGTH_TITLE,
   MAX_PRICE,
+  FILTER_DEFAULT,
+  FILTER_LOW_PRICE,
+  FILTER_HIGH_PRICE,
+  FILTER_DELAY,
+  DEFAULT_AVATAR
 };

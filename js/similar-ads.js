@@ -9,6 +9,7 @@ const offers = {
 };
 
 const createAdElement = ({author, offer}) => {
+
   const adElement = adItemTemplate.cloneNode(true);
 
   adElement.querySelector('.popup__title').textContent = offer.title;
@@ -25,14 +26,14 @@ const createAdElement = ({author, offer}) => {
     adElement.querySelector('.popup__description').remove();
   }
 
-  if (offer.features.length) {
+  if (offer.features) {
     adElement.querySelector('.popup__features').innerHTML =
       offer.features.map((feature) => `<li class="popup__feature popup__feature--${feature}"></li>`).join('');
   } else {
     adElement.querySelector('.popup__features').remove();
   }
 
-  if (offer.photos.length) {
+  if (offer.photos) {
     adElement.querySelector('.popup__photos').innerHTML =
       offer.photos.map((photo) => `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`).join('');
   } else {
