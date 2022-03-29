@@ -1,5 +1,9 @@
 import {MIN_LENGTH_TITLE, MAX_LENGTH_TITLE, MAX_PRICE} from './constant.js';
 import {priceSlider} from './slider.js';
+import {setData} from './api.js';
+import {showError, showSuccess} from './dialog-modal.js';
+import {clearAvatar} from './avatar.js';
+import {clearPhoto} from './photo.js';
 
 const adForm = document.querySelector('.ad-form');
 const formFieldset = adForm.querySelectorAll('fieldset');
@@ -11,6 +15,7 @@ const capacityField = document.querySelector('#capacity');
 const timeInField = document.querySelector('#timein');
 const timeOutField = document.querySelector('#timeout');
 const addressField = document.querySelector('#address');
+const submitButton = document.querySelector('.ad-form__submit');
 const resetButton = document.querySelector('.ad-form__reset');
 addressField.setAttribute('readonly', 'readonly');
 
@@ -35,6 +40,7 @@ const capacityNumberToText = {
   3: 'трех гостей',
 };
 
+// eslint-disable-next-line
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'has-danger',
@@ -119,8 +125,21 @@ const initialForm = (setDefault) => {
   const resetForm = () => {
     adForm.reset();
     pristine.reset();
+    clearAvatar();
+    clearPhoto();
     setDefault();
     setAdType();
+  };
+
+  const sendSuccess = () => {
+    showSuccess();
+    submitButton.removeAttribute('disabled');
+    resetForm();
+  };
+
+  const sendFailure = () => {
+    showError();
+    submitButton.removeAttribute('disabled');
   };
 
   resetButton.addEventListener('click', (evt) => {
@@ -132,7 +151,8 @@ const initialForm = (setDefault) => {
     evt.preventDefault();
     const isValid = pristine.validate();
     if (isValid) {
-      resetForm();
+      submitButton.setAttribute('disabled', 'disabled');
+      setData(sendSuccess, sendFailure, new FormData(evt.target));
     }
   });
 };

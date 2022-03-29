@@ -1,13 +1,15 @@
 import {setEnableForm, setDisableForm} from './ad-form.js';
-import {setEnableFilter, setDisableFilter} from './filter.js';
+import {setDisableFilter} from './filter.js';
+import {setDisabledSlider, setEnabledSlider} from './slider.js';
 
 const setAppEnabled = () => {
   setEnableForm();
-  setEnableFilter();
+  setEnabledSlider();
 };
 
 const setAppDisabled = () => {
   setDisableForm();
+  setDisabledSlider();
   setDisableFilter();
 };
 

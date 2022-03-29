@@ -27,5 +27,7 @@ const priceSlider = (minValue, maxPrice, pristine) => {
 };
 
 const setSliderDefaultValue = () => sliderElement.noUiSlider.set(0);
+const setDisabledSlider = () => sliderElement.setAttribute('disabled', 'disabled');
+const setEnabledSlider = () => sliderElement.removeAttribute('disabled');
 
-export {priceSlider, setSliderDefaultValue};
+export {priceSlider, setSliderDefaultValue, setDisabledSlider, setEnabledSlider};
