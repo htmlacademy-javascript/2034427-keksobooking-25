@@ -45,7 +45,7 @@ const capacityNumberToText = {
   3: 'трех гостей',
 };
 
-const pristine = new Pristine(formElement, {
+const pristine = new window.Pristine(formElement, {
   classTo: 'ad-form__element',
   errorClass: 'has-danger',
   successClass: 'has-success',
