@@ -9,10 +9,10 @@ const getData = (onSuccess, onFailure) => {
       onFailure();
     })
     .then(onSuccess)
-    .catch(() => onFailure);
+    .catch(onFailure);
 };
 
-const setData = (onSuccess, onFailure, data) => {
+const sendData = (onSuccess, onFailure, data) => {
   fetch(API_URL, {
     method: 'POST',
     body: data,
@@ -26,4 +26,5 @@ const setData = (onSuccess, onFailure, data) => {
     .catch(onFailure);
 };
 
-export {getData, setData};
+export {getData, sendData};
+

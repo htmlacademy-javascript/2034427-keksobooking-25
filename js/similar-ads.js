@@ -1,4 +1,4 @@
-const adItemTemplate = document.querySelector('#card').content.querySelector('.popup');
+const templateElement = document.querySelector('#card').content.querySelector('.popup');
 
 const offers = {
   'flat': 'Квартира',
@@ -8,9 +8,9 @@ const offers = {
   'hotel': 'Отель'
 };
 
-const createAdElement = ({author, offer}) => {
+const createAd = ({author, offer}) => {
 
-  const adElement = adItemTemplate.cloneNode(true);
+  const adElement = templateElement.cloneNode(true);
 
   adElement.querySelector('.popup__title').textContent = offer.title;
   adElement.querySelector('.popup__text--address').textContent = offer.address;
@@ -43,4 +43,4 @@ const createAdElement = ({author, offer}) => {
   return adElement;
 };
 
-export {createAdElement};
+export {createAd};

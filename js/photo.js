@@ -1,20 +1,18 @@
-import {fileUploader} from './utils.js';
+import {onFileImageUpload} from './utils.js';
 
-const upload = document.querySelector('.ad-form__photo');
-const fileSelector = document.querySelector('.ad-form__upload input');
-const previewPhoto = document.createElement('img');
-const dropboxZone = fileSelector.parentNode;
+const imgContainerElement = document.querySelector('.ad-form__photo');
+const fileElement = document.querySelector('.ad-form__upload input');
+const previewElement = document.createElement('img');
 
-previewPhoto.style.display = 'flex';
-previewPhoto.style.maxWidth = '100%';
-previewPhoto.style.height = 'auto';
+previewElement.style.display = 'flex';
+previewElement.style.maxWidth = '100%';
+previewElement.style.height = 'auto';
+imgContainerElement.append(previewElement);
 
-upload.append(previewPhoto);
-
-fileUploader(dropboxZone, fileSelector, previewPhoto);
+fileElement.addEventListener('change', onFileImageUpload(fileElement, previewElement));
 
 const clearPhoto = () => {
-  previewPhoto.src = '';
+  previewElement.remove();
 };
 
 export {clearPhoto};
