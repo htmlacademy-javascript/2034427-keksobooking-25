@@ -10,7 +10,7 @@ let currentModal;
 
 function onClick(evt) {
   evt.preventDefault();
-  closeModal(currentModal);
+  closeModal(evt.target);
 }
 
 function onKeydown(evt) {
