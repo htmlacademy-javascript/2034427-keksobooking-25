@@ -1,47 +1,52 @@
-const successModal = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
-const errorModal = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
-const closeButton = errorModal.querySelector('.error__button');
+const successElement = document.querySelector('#success')
+  .content.querySelector('.success').cloneNode(true);
 
-successModal.classList.add('hidden');
-errorModal.classList.add('hidden');
+const errorElement = document.querySelector('#error')
+  .content.querySelector('.error').cloneNode(true);
 
-document.body.append(successModal);
-document.body.append(errorModal);
+const closeButtonElement = errorElement.querySelector('.error__button');
 
-const showModal = (modal) => {
-  modal.classList.remove('hidden');
-  modal.addEventListener('click', onClick);
-  document.addEventListener('keydown', onKeydown);
+let currentModal;
 
-  function onClick (evt) {
-    const target = evt.target;
-    if (target === successModal || target === errorModal || target === closeButton) {
+function onClick(evt) {
+  evt.preventDefault();
+  closeModal(currentModal);
+}
 
-      if (target === closeButton) {
-        target.parentNode.classList.add('hidden');
-      } else {
-        target.classList.add('hidden');
-      }
-      clearListeners(modal);
-    }
+function onKeydown(evt) {
+  evt.preventDefault();
+  if (evt.key === 'Escape' || evt.key === 'Esc') {
+    closeModal(currentModal);
   }
+}
 
-  function onKeydown (evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      modal.classList.add('hidden');
-      modal.removeEventListener('click', onClick);
-    }
-    clearListeners(modal);
-  }
+function onClickCloseButton(evt) {
+  evt.preventDefault();
+  closeModal(currentModal);
+}
 
-  function clearListeners(modalSelector) {
-    modalSelector.removeEventListener('click', onClick);
+function closeModal(modal) {
+  if (modal === currentModal) {
     document.removeEventListener('keydown', onKeydown);
+    modal.remove();
   }
-};
+}
 
-const showSuccess = () => {showModal(successModal);};
-const showError = () => {showModal(errorModal);};
+function showModal(modal) {
+  currentModal = modal;
+  document.body.append(modal);
+  document.addEventListener('keydown', onKeydown);
+  modal.addEventListener('click', onClick);
+}
+
+function showSuccess() {
+  showModal(successElement);
+}
+
+function showError() {
+  showModal(errorElement);
+  closeButtonElement.addEventListener('click', onClickCloseButton);
+}
 
 export {showSuccess, showError};
 

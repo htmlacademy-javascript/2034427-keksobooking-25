@@ -1,10 +1,10 @@
-const imgFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+import {FILE_TYPES} from './constant.js';
 
-const debounce = (fn, wait) => {
-  let timeout;
-  return function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, arguments), wait);
+const debounce = (cb, wait) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => cb.apply(this, rest), wait);
   };
 };
 
@@ -28,55 +28,22 @@ const showAlertError = (message) => {
 
   setTimeout(() => {
     alert.remove();
-  }, 3000);
+  }, 2000);
 };
 
-const fileUploader = (targetElement, fileElement, previewElement) => {
+const onFileImageUpload = (filesElement, preview) => (evt) => {
+  evt.preventDefault();
+  const file = filesElement.files[0];
+  const fileName = file.name.toLowerCase();
 
-  const fileUpload = (files, preview) => {
-    const file = files[0];
-    const ext = file.type.split('/')[1];
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
-    if (imgFileExtensions.includes(ext)) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        preview.src = reader.result;
-      });
-      reader.readAsDataURL(file);
-    } else {
-      fileElement.value = '';
-      showAlertError('Только формат изображения: jpg, jpeg, png, gif');
-    }
-  };
-
-  const onFileUpload = (selector, preview) =>
-    (evt) => {
-      evt.preventDefault();
-      fileUpload(selector.files, preview);
-    };
-
-  const dragenter = (evt) => {
-    evt.stopPropagation();
-    evt.preventDefault();
-  };
-
-  const dragover = (evt) => {
-    evt.stopPropagation();
-    evt.preventDefault();
-  };
-
-  const drop = (preview) => (evt) => {
-    evt.stopPropagation();
-    evt.preventDefault();
-    const dt = evt.dataTransfer;
-    const files = dt.files;
-    fileUpload(files, preview);
-  };
-
-  targetElement.addEventListener('change', onFileUpload(fileElement, previewElement));
-  targetElement.addEventListener('dragenter', dragenter);
-  targetElement.addEventListener('dragover', dragover);
-  targetElement.addEventListener('drop', drop(previewElement));
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+  } else {
+    filesElement.value = '';
+    showAlertError('Только формат изображения: jpg, jpeg, png, gif');
+  }
 };
 
-export {debounce, showAlertError, fileUploader};
+export {debounce, showAlertError, onFileImageUpload};

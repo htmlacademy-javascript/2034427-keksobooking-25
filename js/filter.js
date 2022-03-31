@@ -1,71 +1,69 @@
-import {FILTER_DEFAULT, FILTER_LOW_PRICE, FILTER_HIGH_PRICE, FILTER_DELAY, MAX_COUNT_ADS} from './constant.js';
+import {
+  FILTER_DEFAULT,
+  FILTER_LOW_PRICE,
+  FILTER_HIGH_PRICE,
+  FILTER_DELAY,
+  MAX_COUNT_ADS
+} from './constant.js';
 import {debounce} from './utils.js';
-import {renderMarkers} from './map.js';
+import {updateMarkers} from './map.js';
 
-const filterForm = document.querySelector('.map__filters');
-const filterFormSelects = filterForm.querySelectorAll('select');
-const filterFormFieldset = filterForm.querySelector('fieldset');
-
-const housingType = filterForm.querySelector('#housing-type');
-const housingPrice = filterForm.querySelector('#housing-price');
-const housingRooms = filterForm.querySelector('#housing-rooms');
-const housingGuests = filterForm.querySelector('#housing-guests');
-
-const setDisableFilter = () => {
-  filterForm.classList.add('map__filters--disabled');
-  filterFormFieldset.disabled = true;
-  filterFormSelects.forEach((it) => {it.disabled = true;});
+const PriceLevel = {
+  LOW: 'low',
+  MIDDLE: 'middle',
+  HIGH: 'high',
 };
 
-const setEnableFilter = () => {
-  filterForm.classList.remove('map__filters--disabled');
-  filterFormFieldset.disabled = false;
-  filterFormSelects.forEach((it) => {it.disabled = false;});
+const formElement = document.querySelector('.map__filters');
+const selectElement = formElement.querySelectorAll('select');
+const fieldsetElement = formElement.querySelector('fieldset');
+
+const typeElement = formElement.querySelector('#housing-type');
+const priceElement = formElement.querySelector('#housing-price');
+const roomsElement = formElement.querySelector('#housing-rooms');
+const guestsElement = formElement.querySelector('#housing-guests');
+
+const setDisableFilterForm = () => {
+  formElement.classList.add('map__filters--disabled');
+  fieldsetElement.disabled = true;
+  selectElement.forEach((it) => {it.disabled = true;});
 };
 
-const defaultCheck = (selector) => selector.value === FILTER_DEFAULT;
-
-const filterType = (itemAd, selector) => {
-  if (!defaultCheck(selector)) {
-    return itemAd.offer.type === selector.value;
-  }
-  return true;
+const setEnableFilterForm = () => {
+  formElement.classList.remove('map__filters--disabled');
+  fieldsetElement.disabled = false;
+  selectElement.forEach((it) => {it.disabled = false;});
 };
 
-const filterPrice = (itemAd, selector) => {
-  if (defaultCheck(selector)) {
-    return true;
+const getDefaultCheck = (selector) => selector.value === FILTER_DEFAULT;
+
+const checkType = (itemAd) => getDefaultCheck(typeElement) || itemAd.offer.type === typeElement.value;
+
+const checkPrice = (itemAd) => {
+  switch (priceElement.value) {
+    case FILTER_DEFAULT:
+      return true;
+    case PriceLevel.LOW:
+      return itemAd.offer.price < FILTER_LOW_PRICE;
+    case PriceLevel.MIDDLE:
+      return itemAd.offer.price >= FILTER_LOW_PRICE && itemAd.offer.price < FILTER_HIGH_PRICE;
+    case PriceLevel.HIGH:
+      return itemAd.offer.price >= FILTER_HIGH_PRICE;
+    default:
+      return false;
   }
-  if (selector.value === 'low') {
-    return itemAd.offer.price < FILTER_LOW_PRICE;
-  }
-  if (selector.value === 'middle') {
-    return itemAd.offer.price >= FILTER_LOW_PRICE && itemAd.offer.price < FILTER_HIGH_PRICE;
-  }
-  if (selector.value === 'high') {
-    return itemAd.offer.price >= FILTER_HIGH_PRICE;
-  }
-  return false;
 };
 
-const filterRooms = (itemAd, selector) => {
-  if (!defaultCheck(selector)) {
-    return parseInt(selector.value, 10) === itemAd.offer.rooms;
-  }
-  return true;
-};
+const checkRooms = (itemAd) =>
+  getDefaultCheck(roomsElement) || parseInt(roomsElement.value, 10) === itemAd.offer.rooms;
 
-const filterGuests = (itemAd, selector) => {
-  if (!defaultCheck(selector)) {
-    return parseInt(selector.value, 10) <= itemAd.offer.guests;
-  }
-  return true;
-};
+const checkGuests = (itemAd) =>
+  getDefaultCheck(guestsElement) || parseInt(guestsElement.value, 10) <= itemAd.offer.guests;
 
-const filterFeatures = (itemAd) => {
-  const checkedFeatures = filterForm.querySelectorAll('.map__checkbox:checked');
-  for (let i = 0; i < checkedFeatures.length; i++) {
-    if (itemAd.offer.features && itemAd.offer.features.includes(checkedFeatures[i].value)) {
+const checkFeatures = (itemAd) => {
+  const featuresElement = formElement.querySelectorAll('.map__checkbox:checked');
+  for (let i = 0; i < featuresElement.length; i++) {
+    if (itemAd.offer.features && itemAd.offer.features.includes(featuresElement[i].value)) {
       continue;
     }
     return false;
@@ -73,25 +71,32 @@ const filterFeatures = (itemAd) => {
   return true;
 };
 
-const finalFilter = (similarAds) =>
-  similarAds.filter((itemAd) => (
-    filterType(itemAd, housingType) &&
-    filterPrice(itemAd, housingPrice) &&
-    filterRooms(itemAd, housingRooms) &&
-    filterGuests(itemAd, housingGuests) &&
-    filterFeatures(itemAd)
-  ));
+const getFilteredAds = (similarAds) => {
+  const filteredAds = [];
+  let counter = 0;
+  for (let i = 0; i < similarAds.length; i++) {
+    const item = similarAds[i];
+    if (checkType(item) && checkPrice(item) && checkRooms(item) && checkGuests(item) && checkFeatures(item)) {
+      filteredAds.push(similarAds[i]);
+      counter++;
+      if (counter === MAX_COUNT_ADS) {
+        break;
+      }
+    }
+  }
+  return filteredAds;
+};
 
 const onFilterChange = (similarAds) =>
   debounce(() => {
-    const filteredAdds = finalFilter(similarAds);
-    renderMarkers(filteredAdds.slice(0, MAX_COUNT_ADS));
+    const filteredAdds = getFilteredAds(similarAds).slice(0, MAX_COUNT_ADS);
+    updateMarkers(filteredAdds);
   }, FILTER_DELAY);
 
 const setFilter = (similarAds) =>
-  filterForm.addEventListener('change', onFilterChange(similarAds));
+  formElement.addEventListener('change', onFilterChange(similarAds));
 
-const resetFilters = () => filterForm.reset();
+const resetFilters = () => formElement.reset();
 
-export {setEnableFilter, setDisableFilter, setFilter, resetFilters};
+export {setEnableFilterForm, setDisableFilterForm, setFilter, resetFilters};
 

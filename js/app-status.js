@@ -1,17 +1,17 @@
 import {setEnableForm, setDisableForm} from './ad-form.js';
-import {setDisableFilter} from './filter.js';
+import {setDisableFilterForm} from './filter.js';
 import {setDisabledSlider, setEnabledSlider} from './slider.js';
 
-const setAppEnabled = () => {
+const setEnabledApp = () => {
   setEnableForm();
   setEnabledSlider();
 };
 
-const setAppDisabled = () => {
+const setDisabledApp = () => {
   setDisableForm();
   setDisabledSlider();
-  setDisableFilter();
+  setDisableFilterForm();
 };
 
-export {setAppEnabled, setAppDisabled};
+export {setEnabledApp, setDisabledApp};
 

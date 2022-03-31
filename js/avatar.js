@@ -1,14 +1,13 @@
-import {fileUploader} from './utils.js';
+import {onFileImageUpload} from './utils.js';
 import {DEFAULT_AVATAR} from './constant.js';
 
-const fileInputSelector = document.querySelector('.ad-form-header__input');
-const previewAvatar = document.querySelector('.ad-form-header__preview img');
-const dropboxZone = fileInputSelector.parentNode;
+const fileElement = document.querySelector('.ad-form-header__input');
+const previewElement = document.querySelector('.ad-form-header__preview img');
 
-fileUploader(dropboxZone, fileInputSelector, previewAvatar);
+fileElement.addEventListener('change', onFileImageUpload(fileElement, previewElement));
 
 const clearAvatar = () => {
-  previewAvatar.src = DEFAULT_AVATAR;
+  previewElement.src = DEFAULT_AVATAR;
 };
 
 export {clearAvatar};

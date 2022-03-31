@@ -1,27 +1,29 @@
-const sliderElement = document.querySelector('.ad-form__slider');
-const priceField = document.querySelector('#price');
+import {MAX_PRICE} from './constant.js';
 
-const priceSlider = (minValue, maxPrice, pristine) => {
+const sliderElement = document.querySelector('.ad-form__slider');
+const priceElement = document.querySelector('#price');
+
+const setPriceSlider = (pristine) => {
   noUiSlider.create(sliderElement, {
     range: {
       min: 0,
-      max: maxPrice,
+      max: MAX_PRICE,
     },
     start: 0,
     step: 1,
     connect: 'lower',
   });
 
-  priceField.addEventListener('input', () => {
-    sliderElement.noUiSlider.set(priceField.value);
+  priceElement.addEventListener('input', () => {
+    sliderElement.noUiSlider.set(priceElement.value);
   });
 
   sliderElement.noUiSlider.on('update', (values, handle) => {
-    priceField.value = parseInt(values[handle], 10);
-    if (parseInt(priceField.value, 10) === 0) {
-      priceField.value = '';
+    priceElement.value = parseInt(values[handle], 10);
+    if (parseInt(priceElement.value, 10) === 0) {
+      priceElement.value = '';
     } else {
-      pristine.validate(priceField);
+      pristine.validate(priceElement);
     }
   });
 };
@@ -30,4 +32,4 @@ const setSliderDefaultValue = () => sliderElement.noUiSlider.set(0);
 const setDisabledSlider = () => sliderElement.setAttribute('disabled', 'disabled');
 const setEnabledSlider = () => sliderElement.removeAttribute('disabled');
 
-export {priceSlider, setSliderDefaultValue, setDisabledSlider, setEnabledSlider};
+export {setPriceSlider, setSliderDefaultValue, setDisabledSlider, setEnabledSlider};
